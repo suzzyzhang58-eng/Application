@@ -4,489 +4,391 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Analytics & Accounting Applications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Base styles */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #1DB954;
+            --secondary: #191414;
+            --accent: #8A2BE2;
+            --light: #F5F5F5;
+            --dark: #121212;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--gradient);
             color: white; 
-            line-height: 1.6; 
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            color: var(--primary);
         }
         
         /* Navigation */
         .navbar {
             display: flex;
-            justify-content: space-around;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            gap: 1.5rem;
         }
+        
         .nav-item {
-            text-align: center;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
+        
+        .nav-item:hover {
+            background: rgba(29, 185, 84, 0.2);
+        }
+        
         .nav-item.active {
-            color: #1DB954; /* Spotify green */
-            font-weight: bold;
+            background: var(--primary);
+            color: var(--secondary);
+            font-weight: 600;
         }
-
+        
         /* Page containers */
         .page { 
             padding: 2rem; 
             min-height: 100vh;
             display: none;
         }
+        
         .page.active { 
             display: block; 
             animation: fadeIn 0.5s;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Home page styles */
-        .hero { 
-            text-align: center; 
-            padding-top: 3rem;
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
         }
+        
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #1DB954, #8A2BE2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: var(--light);
+        }
+        
+        /* Stats grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
         }
+        
         .stat-card {
             background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: 10px;
+            padding: 1.5rem;
+            border-radius: 15px;
             text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
         }
         
-        /* Chart styles */
-        .chart-container {
-            margin: 1.5rem 0;
+        .stat-card:hover {
+            transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.15);
-            padding: 1rem;
-            border-radius: 12px;
         }
-        .chart-title {
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .stat-card h3 {
+            font-size: 2rem;
             margin-bottom: 0.5rem;
-            font-size: 1.2rem;
         }
-
-        /* Data page styles */
+        
+        /* Chart containers */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .chart-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .chart-title i {
+            color: var(--primary);
+        }
+        
+        /* Accounting insights */
         .accounting-insight {
             background: rgba(255, 255, 255, 0.15);
-            margin: 1.5rem 0;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 4px solid #1DB954;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary);
+            backdrop-filter: blur(5px);
         }
         
-        /* Table styles */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            background: rgba(255, 255, 255, 0.1);
+        .accounting-insight h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
         }
-        .data-table th, .data-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        
+        /* Grid layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
         }
-        .data-table th {
-            background: rgba(0, 0, 0, 0.2);
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <div class="navbar">
-        <div class="nav-item active" onclick="showPage('home')">🏠 Home</div>
-        <div class="nav-item" onclick="showPage('stats')">📊 Data Analysis</div>
-        <div class="nav-item" onclick="showPage('projects')">💼 Accounting Apps</div>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-music"></i>
+            <span>MusicAnalytics</span>
+        </div>
+        
+        <div class="navbar">
+            <div class="nav-item active" onclick="showPage('home')">
+                <i class="fas fa-home"></i> Home
+            </div>
+            <div class="nav-item" onclick="showPage('stats')">
+                <i class="fas fa-chart-bar"></i> Data Analysis
+            </div>
+            <div class="nav-item" onclick="showPage('projects')">
+                <i class="fas fa-calculator"></i> Accounting Apps
+            </div>
+        </div>
     </div>
 
-    <!-- Home Page -->
-    <div id="home" class="page active">
-        <div class="hero">
-            <h1>🎵 Music Analytics Platform</h1>
-            <p>Exploring accounting applications through music streaming data</p>
+    <div class="container">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>Music Analytics Platform</h1>
+                <p>Exploring accounting applications through music streaming data analysis and visualization</p>
+            </div>
             
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h3>Spotify</h3>
-                    <h2>602M Users</h2>
-                    <p>236M Premium Subscribers</p>
+                    <i class="fab fa-spotify"></i>
+                    <h3>602M</h3>
+                    <p>Monthly Active Users</p>
                 </div>
                 <div class="stat-card">
-                    <h3>YouTube Music</h3>
-                    <h2>150M Users</h2>
-                    <p>Over 100M tracks</p>
+                    <i class="fab fa-youtube"></i>
+                    <h3>150M</h3>
+                    <p>YouTube Music Subscribers</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>$31.5B</h3>
+                    <p>Global Streaming Revenue 2024</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>14.8%</h3>
+                    <p>Annual Market Growth</p>
                 </div>
             </div>
-
+            
             <div class="chart-container">
-                <h3 class="chart-title">2024 Top Artists by Streams</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Artist</th>
-                        <th>Streams (Billions)</th>
-                        <th>Platform</th>
-                    </tr>
-                    <tr>
-                        <td>Taylor Swift</td>
-                        <td>26.1</td>
-                        <td>Spotify/YouTube</td>
-                    </tr>
-                    <tr>
-                        <td>Bad Bunny</td>
-                        <td>18.5</td>
-                        <td>Spotify</td>
-                    </tr>
-                    <tr>
-                        <td>The Weeknd</td>
-                        <td>16.2</td>
-                        <td>Spotify/YouTube</td>
-                    </tr>
-                    <tr>
-                        <td>Drake</td>
-                        <td>15.8</td>
-                        <td>Spotify/YouTube</td>
-                    </tr>
-                    <tr>
-                        <td>Peso Pluma</td>
-                        <td>13.7</td>
-                        <td>YouTube</td>
-                    </tr>
-                </table>
+                <div class="chart-title">
+                    <i class="fas fa-crown"></i>
+                    <h2>2024 Top Artists by Streams (Billions)</h2>
+                </div>
+                <canvas id="artistsChart"></canvas>
+            </div>
+            
+            <div class="grid-2">
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fas fa-globe"></i>
+                        <h2>Market Share by Platform</h2>
+                    </div>
+                    <canvas id="platformChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fas fa-money-bill-trend-up"></i>
+                        <h2>Revenue Growth Projection</h2>
+                    </div>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Analysis Page -->
+        <div id="stats" class="page">
+            <div class="hero">
+                <h1>Data Analytics Insights</h1>
+                <p>Transforming music streaming data into accounting intelligence</p>
+            </div>
+            
+            <div class="accounting-insight">
+                <h3><i class="fas fa-bullseye"></i> Trend Analysis = Financial Forecasting</h3>
+                <p>Predicting hit songs ↔️ Forecasting company revenue and cash flow</p>
+                <p><em>Just as we predict the next hit song based on streaming data, in accounting we use time series analysis to forecast company revenue and manage cash flow.</em></p>
             </div>
             
             <div class="chart-container">
-                <h3 class="chart-title">2024 Most Streamed Songs</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Song</th>
-                        <th>Artist</th>
-                        <th>Streams (Millions)</th>
-                    </tr>
-                    <tr>
-                        <td>Flowers</td>
-                        <td>Miley Cyrus</td>
-                        <td>1,600</td>
-                    </tr>
-                    <tr>
-                        <td>Seven</td>
-                        <td>Jung Kook ft. Latto</td>
-                        <td>1,230</td>
-                    </tr>
-                    <tr>
-                        <td>Cruel Summer</td>
-                        <td>Taylor Swift</td>
-                        <td>1,180</td>
-                    </tr>
-                    <tr>
-                        <td>Calm Down</td>
-                        <td>Rema & Selena Gomez</td>
-                        <td>1,150</td>
-                    </tr>
-                    <tr>
-                        <td>Ella Baila Sola</td>
-                        <td>Eslabon Armado & Peso Pluma</td>
-                        <td>1,090</td>
-                    </tr>
-                </table>
+                <div class="chart-title">
+                    <i class="fas fa-user-check"></i>
+                    <h2>User Engagement Metrics (2024)</h2>
+                </div>
+                <canvas id="engagementChart"></canvas>
+            </div>
+            
+            <div class="accounting-insight">
+                <h3><i class="fas fa-chart-pie"></i> User Behavior Analysis = Customer Analytics</h3>
+                <p>Analyzing listening habits ↔️ Analyzing customer spending patterns</p>
+                <p><em>Analyzing the listening behavior of millions of users is identical to analyzing a company's customer purchasing behavior and supplier transaction patterns, which is central to managerial accounting.</em></p>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h2>Regional Streaming Performance</h2>
+                </div>
+                <canvas id="regionalChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Accounting Applications Page -->
+        <div id="projects" class="page">
+            <div class="hero">
+                <h1>Accounting Applications</h1>
+                <p>Practical accounting use cases in the music industry</p>
+            </div>
+            
+            <div class="accounting-insight">
+                <h3><i class="fas fa-money-bill-alt"></i> Royalty Distribution Model</h3>
+                <p>How streaming platforms recognize and distribute artist royalty income based on complex playback data - directly related to revenue recognition standards.</p>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <h2>Royalty Distribution per 1M Streams ($)</h2>
+                </div>
+                <canvas id="royaltyChart"></canvas>
+            </div>
+            
+            <div class="accounting-insight">
+                <h3><i class="fas fa-file-invoice-dollar"></i> Cost Accounting in Music Production</h3>
+                <p>How music production costs (studio time, marketing, royalties) are allocated across different albums and songs to calculate accurate profit and loss.</p>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Cost Breakdown for Album Production ($000)</h2>
+                </div>
+                <canvas id="costChart"></canvas>
+            </div>
+            
+            <div class="accounting-insight">
+                <h3><i class="fas fa-search-dollar"></i> Data Analytics in Auditing</h3>
+                <p>How data analytics tools audit millions of streaming transactions to detect anomalous patterns (like chart manipulation), similar to anomaly detection in financial auditing.</p>
             </div>
         </div>
     </div>
-
-    <!-- Data Analysis Page -->
-    <div id="stats" class="page">
-        <h2>📈 Accounting Insights from Music Data</h2>
-        
-        <div class="accounting-insight">
-            <h3>🎯 Trend Analysis = Financial Forecasting</h3>
-            <p>Predicting hit songs ↔️ Forecasting company revenue and cash flow</p>
-            <p><em>Just as we predict the next hit song based on streaming data, in accounting we use time series analysis to forecast company revenue and manage cash flow.</em></p>
-            
-            <div class="chart-container">
-                <h3 class="chart-title">Revenue Growth Projection (Spotify 2023-2025)</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Quarter</th>
-                        <th>Actual Revenue ($B)</th>
-                        <th>Projected Revenue ($B)</th>
-                        <th>Growth Rate</th>
-                    </tr>
-                    <tr>
-                        <td>Q1 2023</td>
-                        <td>3.20</td>
-                        <td>3.20</td>
-                        <td>13.5%</td>
-                    </tr>
-                    <tr>
-                        <td>Q2 2023</td>
-                        <td>3.38</td>
-                        <td>3.35</td>
-                        <td>14.2%</td>
-                    </tr>
-                    <tr>
-                        <td>Q3 2023</td>
-                        <td>3.57</td>
-                        <td>3.52</td>
-                        <td>15.1%</td>
-                    </tr>
-                    <tr>
-                        <td>Q4 2023</td>
-                        <td>3.87</td>
-                        <td>3.75</td>
-                        <td>16.3%</td>
-                    </tr>
-                    <tr>
-                        <td>Q1 2024</td>
-                        <td>3.96</td>
-                        <td>3.95</td>
-                        <td>14.8%</td>
-                    </tr>
-                    <tr>
-                        <td>Q2 2024</td>
-                        <td>4.18</td>
-                        <td>4.15</td>
-                        <td>15.5%</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="accounting-insight">
-            <h3>📊 User Behavior Analysis = Customer Analytics</h3>
-            <p>Analyzing listening habits ↔️ Analyzing customer spending patterns</p>
-            <p><em>Analyzing the listening behavior of millions of users is identical to analyzing a company's customer purchasing behavior and supplier transaction patterns, which is central to managerial accounting.</em></p>
-            
-            <div class="chart-container">
-                <h3 class="chart-title">User Engagement Metrics (2024)</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Platform</th>
-                        <th>Daily Active Users (M)</th>
-                        <th>Avg. Session (min)</th>
-                        <th>Songs/User/Day</th>
-                        <th>Churn Rate</th>
-                    </tr>
-                    <tr>
-                        <td>Spotify</td>
-                        <td>165</td>
-                        <td>82</td>
-                        <td>22.5</td>
-                        <td>4.2%</td>
-                    </tr>
-                    <tr>
-                        <td>YouTube Music</td>
-                        <td>78</td>
-                        <td>68</td>
-                        <td>18.7</td>
-                        <td>5.8%</td>
-                    </tr>
-                    <tr>
-                        <td>Apple Music</td>
-                        <td>45</td>
-                        <td>74</td>
-                        <td>19.3</td>
-                        <td>3.9%</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="accounting-insight">
-            <h3>🏆 Ranking Charts = Performance Evaluation</h3>
-            <p>Artist rankings ↔️ Sales team or product rankings</p>
-            <p><em>Ranking top artists by streams is similar to ranking sales teams or products by revenue, a critical task in performance evaluation.</em></p>
-            
-            <div class="chart-container">
-                <h3 class="chart-title">Regional Streaming Performance (Top Markets)</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Region</th>
-                        <th>Top Artist</th>
-                        <th>Market Share</th>
-                        <th>Revenue Contribution</th>
-                        <th>Growth YOY</th>
-                    </tr>
-                    <tr>
-                        <td>North America</td>
-                        <td>Taylor Swift</td>
-                        <td>18.5%</td>
-                        <td>36.2%</td>
-                        <td>14.7%</td>
-                    </tr>
-                    <tr>
-                        <td>Latin America</td>
-                        <td>Bad Bunny</td>
-                        <td>22.7%</td>
-                        <td>18.9%</td>
-                        <td>22.3%</td>
-                    </tr>
-                    <tr>
-                        <td>Europe</td>
-                        <td>Ed Sheeran</td>
-                        <td>12.8%</td>
-                        <td>25.6%</td>
-                        <td>9.8%</td>
-                    </tr>
-                    <tr>
-                        <td>Asia-Pacific</td>
-                        <td>BTS</td>
-                        <td>16.3%</td>
-                        <td>14.2%</td>
-                        <td>31.5%</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Accounting Applications Page -->
-    <div id="projects" class="page">
-        <h2>💼 Accounting Applications in Music Industry</h2>
-        
-        <div class="accounting-insight">
-            <h3>📋 Case Study: Cost Accounting in Music Production</h3>
-            <p>How music production costs (studio time, marketing, royalties) are allocated across different albums and songs to calculate accurate profit and loss.</p>
-            
-            <div class="chart-container">
-                <h3 class="chart-title">Cost Breakdown for Album Production ($000)</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Cost Category</th>
-                        <th>Recording</th>
-                        <th>Marketing</th>
-                        <th>Distribution</th>
-                        <th>Royalties</th>
-                        <th>Total</th>
-                    </tr>
-                    <tr>
-                        <td>Major Label Artist</td>
-                        <td>250</td>
-                        <td>500</td>
-                        <td>75</td>
-                        <td>300</td>
-                        <td>1,125</td>
-                    </tr>
-                    <tr>
-                        <td>Independent Artist</td>
-                        <td>80</td>
-                        <td>150</td>
-                        <td>40</td>
-                        <td>120</td>
-                        <td>390</td>
-                    </tr>
-                    <tr>
-                        <td>Break-even Point (units)</td>
-                        <td colspan="5">Major: 225,000 | Independent: 78,000</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="accounting-insight">
-            <h3>💰 Case Study: Royalty Revenue Recognition</h3>
-            <p>How streaming platforms recognize and distribute artist royalty income based on complex playback data - directly related to revenue recognition standards.</p>
-            
-            <div class="chart-container">
-                <h3 class="chart-title">Royalty Distribution Model (per 1M streams)</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Stakeholder</th>
-                        <th>Spotify ($)</th>
-                        <th>YouTube Music ($)</th>
-                        <th>Apple Music ($)</th>
-                    </tr>
-                    <tr>
-                        <td>Record Label</td>
-                        <td>2,800</td>
-                        <td>1,850</td>
-                        <td>3,200</td>
-                    </tr>
-                    <tr>
-                        <td>Artist Royalties</td>
-                        <td>800</td>
-                        <td>650</td>
-                        <td>1,100</td>
-                    </tr>
-                    <tr>
-                        <td>Publisher</td>
-                        <td>450</td>
-                        <td>350</td>
-                        <td>600</td>
-                    </tr>
-                    <tr>
-                        <td>Songwriter</td>
-                        <td>350</td>
-                        <td>300</td>
-                        <td>500</td>
-                    </tr>
-                    <tr>
-                        <td>Platform Share</td>
-                        <td>1,600</td>
-                        <td>2,850</td>
-                        <td>1,600</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="accounting-insight">
-            <h3>🔍 Case Study: Data Analytics in Auditing</h3>
-            <p>How data analytics tools audit millions of streaming transactions to detect anomalous patterns (like chart manipulation), similar to anomaly detection in financial auditing.</p>
-            
-            <div class="chart-container">
-                <h3 class="chart-title">Streaming Fraud Detection Metrics</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Anomaly Type</th>
-                        <th>Detection Method</th>
-                        <th>2023 Cases</th>
-                        <th>2024 Cases</th>
-                        <th>Impact ($M)</th>
-                    </tr>
-                    <tr>
-                        <td>Bot Streaming</td>
-                        <td>Pattern Recognition</td>
-                        <td>1,245</td>
-                        <td>1,872</td>
-                        <td>42.5</td>
-                    </tr>
-                    <tr>
-                        <td>Payment Fraud</td>
-                        <td>Behavior Analysis</td>
-                        <td>587</td>
-                        <td>723</td>
-                        <td>18.3</td>
-                    </tr>
-                    <tr>
-                        <td>Royalty Miscalculation</td>
-                        <td>Data Reconciliation</td>
-                        <td>312</td>
-                        <td>285</td>
-                        <td>9.7</td>
-                    </tr>
-                    <tr>
-                        <td>Fake Artists</td>
-                        <td>Network Analysis</td>
-                        <td>98</td>
-                        <td>156</td>
-                        <td>5.2</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+    
+    <div class="footer">
+        <p>Music Analytics Platform © 2024 | Data sourced from industry reports and market analysis</p>
     </div>
 
     <script>
-        // Simple page navigation
+        // Page navigation
         function showPage(pageId) {
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
@@ -498,8 +400,209 @@
             });
             // Show selected page and activate navigation
             document.getElementById(pageId).classList.add('active');
-            event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
         }
+        
+        // Initialize charts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Top Artists Chart
+            const artistsCtx = document.getElementById('artistsChart').getContext('2d');
+            new Chart(artistsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Taylor Swift', 'Bad Bunny', 'The Weeknd', 'Drake', 'Peso Pluma'],
+                    datasets: [{
+                        label: 'Streams (Billions)',
+                        data: [26.1, 18.5, 16.2, 15.8, 13.7],
+                        backgroundColor: [
+                            'rgba(29, 185, 84, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(138, 43, 226, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(29, 185, 84, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(138, 43, 226, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Billions of Streams'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Platform Market Share Chart
+            const platformCtx = document.getElementById('platformChart').getContext('2d');
+            new Chart(platformCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Spotify', 'YouTube Music', 'Apple Music', 'Amazon Music', 'Others'],
+                    datasets: [{
+                        data: [31, 17, 15, 13, 24],
+                        backgroundColor: [
+                            'rgba(29, 185, 84, 0.7)',
+                            'rgba(255, 0, 0, 0.7)',
+                            'rgba(251, 115, 115, 0.7)',
+                            'rgba(50, 130, 220, 0.7)',
+                            'rgba(100, 100, 100, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(29, 185, 84, 1)',
+                            'rgba(255, 0, 0, 1)',
+                            'rgba(251, 115, 115, 1)',
+                            'rgba(50, 130, 220, 1)',
+                            'rgba(100, 100, 100, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Revenue Projection Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023', 'Q1 2024', 'Q2 2024'],
+                    datasets: [{
+                        label: 'Revenue ($B)',
+                        data: [3.20, 3.38, 3.57, 3.87, 3.96, 4.18],
+                        fill: false,
+                        borderColor: 'rgba(138, 43, 226, 1)',
+                        tension: 0.1,
+                        pointBackgroundColor: 'rgba(138, 43, 226, 1)',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Revenue in Billions ($)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Engagement Metrics Chart
+            const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+            new Chart(engagementCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Daily Active Users', 'Avg. Session (min)', 'Songs/User/Day', 'Churn Rate', 'Premium Conversion'],
+                    datasets: [
+                        {
+                            label: 'Spotify',
+                            data: [165, 82, 22.5, 4.2, 39.2],
+                            fill: true,
+                            backgroundColor: 'rgba(29, 185, 84, 0.2)',
+                            borderColor: 'rgba(29, 185, 84, 1)',
+                            pointBackgroundColor: 'rgba(29, 185, 84, 1)',
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'YouTube Music',
+                            data: [78, 68, 18.7, 5.8, 28.5],
+                            fill: true,
+                            backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                            borderColor: 'rgba(255, 0, 0, 1)',
+                            pointBackgroundColor: 'rgba(255, 0, 0, 1)',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0
+                        }
+                    }
+                }
+            });
+            
+            // Royalty Distribution Chart
+            const royaltyCtx = document.getElementById('royaltyChart').getContext('2d');
+            new Chart(royaltyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Record Label', 'Artist Royalties', 'Publisher', 'Songwriter', 'Platform Share'],
+                    datasets: [
+                        {
+                            label: 'Spotify',
+                            data: [2800, 800, 450, 350, 1600],
+                            backgroundColor: 'rgba(29, 185, 84, 0.7)'
+                        },
+                        {
+                            label: 'YouTube Music',
+                            data: [1850, 650, 350, 300, 2850],
+                            backgroundColor: 'rgba(255, 0, 0, 0.7)'
+                        },
+                        {
+                            label: 'Apple Music',
+                            data: [3200, 1100, 600, 500, 1600],
+                            backgroundColor: 'rgba(251, 115, 115, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'USD per 1M Streams'
+                            }
+                        }
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
