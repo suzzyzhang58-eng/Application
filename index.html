@@ -14,6 +14,8 @@
             --light: #F5F5F5;
             --dark: #121212;
             --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.12);
         }
         
         * { 
@@ -28,6 +30,8 @@
             color: white; 
             line-height: 1.6;
             overflow-x: hidden;
+            min-height: 100vh;
+            background-attachment: fixed;
         }
         
         .container {
@@ -47,6 +51,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
         
         .logo {
@@ -72,6 +77,9 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .nav-item:hover {
@@ -97,8 +105,8 @@
         }
         
         @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
         }
         
         /* Hero section */
@@ -113,6 +121,7 @@
             background: linear-gradient(to right, #1DB954, #8A2BE2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
         
         .hero p {
@@ -131,18 +140,20 @@
         }
         
         .stat-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
             padding: 1.5rem;
             border-radius: 15px;
             text-align: center;
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
         }
         
         .stat-card i {
@@ -158,12 +169,13 @@
         
         /* Chart containers */
         .chart-container {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
             padding: 1.5rem;
             border-radius: 15px;
             margin: 2rem 0;
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
         
         .chart-title {
@@ -186,6 +198,13 @@
             border-radius: 15px;
             border-left: 4px solid var(--primary);
             backdrop-filter: blur(5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .accounting-insight:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.18);
         }
         
         .accounting-insight h3 {
@@ -210,6 +229,18 @@
             margin-top: 3rem;
             background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(10px);
+            border-top: 1px solid var(--card-border);
+        }
+        
+        /* Animation for elements */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 5s ease-in-out infinite;
         }
         
         /* Responsive */
@@ -224,6 +255,10 @@
             
             .hero h1 {
                 font-size: 2.5rem;
+            }
+            
+            .header {
+                padding: 1rem;
             }
         }
     </style>
@@ -258,22 +293,22 @@
             </div>
             
             <div class="stats-grid">
-                <div class="stat-card">
+                <div class="stat-card floating" style="animation-delay: 0s;">
                     <i class="fab fa-spotify"></i>
                     <h3>602M</h3>
                     <p>Monthly Active Users</p>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card floating" style="animation-delay: 0.5s;">
                     <i class="fab fa-youtube"></i>
                     <h3>150M</h3>
                     <p>YouTube Music Subscribers</p>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card floating" style="animation-delay: 1s;">
                     <i class="fas fa-money-bill-wave"></i>
                     <h3>$31.5B</h3>
                     <p>Global Streaming Revenue 2024</p>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card floating" style="animation-delay: 1.5s;">
                     <i class="fas fa-chart-line"></i>
                     <h3>14.8%</h3>
                     <p>Annual Market Growth</p>
@@ -494,7 +529,8 @@
                     datasets: [{
                         label: 'Revenue ($B)',
                         data: [3.20, 3.38, 3.57, 3.87, 3.96, 4.18],
-                        fill: false,
+                        fill: true,
+                        backgroundColor: 'rgba(138, 43, 226, 0.2)',
                         borderColor: 'rgba(138, 43, 226, 1)',
                         tension: 0.1,
                         pointBackgroundColor: 'rgba(138, 43, 226, 1)',
@@ -560,6 +596,60 @@
                 }
             });
             
+            // Regional Performance Chart
+            const regionalCtx = document.getElementById('regionalChart').getContext('2d');
+            new Chart(regionalCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['North America', 'Latin America', 'Europe', 'Asia-Pacific'],
+                    datasets: [
+                        {
+                            label: 'Market Share (%)',
+                            data: [18.5, 22.7, 12.8, 16.3],
+                            backgroundColor: 'rgba(29, 185, 84, 0.7)',
+                            borderColor: 'rgba(29, 185, 84, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Growth YOY (%)',
+                            data: [14.7, 22.3, 9.8, 31.5],
+                            backgroundColor: 'rgba(138, 43, 226, 0.7)',
+                            borderColor: 'rgba(138, 43, 226, 1)',
+                            borderWidth: 1,
+                            type: 'line',
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Market Share (%)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Growth YOY (%)'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+            
             // Royalty Distribution Chart
             const royaltyCtx = document.getElementById('royaltyChart').getContext('2d');
             new Chart(royaltyCtx, {
@@ -597,6 +687,44 @@
                             title: {
                                 display: true,
                                 text: 'USD per 1M Streams'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Cost Breakdown Chart
+            const costCtx = document.getElementById('costChart').getContext('2d');
+            new Chart(costCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Recording', 'Marketing', 'Distribution', 'Royalties'],
+                    datasets: [
+                        {
+                            label: 'Major Label Artist',
+                            data: [250, 500, 75, 300],
+                            backgroundColor: 'rgba(29, 185, 84, 0.7)'
+                        },
+                        {
+                            label: 'Independent Artist',
+                            data: [80, 150, 40, 120],
+                            backgroundColor: 'rgba(138, 43, 226, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cost in Thousands ($)'
                             }
                         }
                     }
